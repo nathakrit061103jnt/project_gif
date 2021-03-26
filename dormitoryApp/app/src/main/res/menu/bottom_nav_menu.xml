@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="#399C27B0"
+    >
+
+    <item
+        android:id="@+id/newFragment"
+        android:icon="@drawable/ic_newspaper_variant"
+        android:title="กระดานข่าว" />
+
+    <item
+        android:id="@+id/invoiceFragment"
+        android:icon="@drawable/ic_alpha_i_circle"
+        android:title="บิลค่าเช่า" />
+
+    <item
+        android:id="@+id/leasesFragment"
+        android:icon="@drawable/ic_book"
+        android:title="ข้อมูลสัญญาเช่า" />
+
+    <item
+        android:id="@+id/profileFragment"
+        android:icon="@drawable/ic_account_circle"
+        android:title="ข้อมูลผู้เช่า" />
+
+</menu>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/newFragment">
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="com.example.dormitoryapp.ui.home.HomeFragment"
+        android:label="กระดานข่าว"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/navigation_dashboard"
+        android:name="com.example.dormitoryapp.ui.dashboard.DashboardFragment"
+        android:label="บิลค่าเช่า"
+        tools:layout="@layout/fragment_dashboard" />
+
+    <fragment
+        android:id="@+id/navigation_notifications"
+        android:name="com.example.dormitoryapp.ui.notifications.NotificationsFragment"
+        android:label="ข้อมูลสัญญาเช่า"
+        tools:layout="@layout/fragment_notifications" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.dormitoryapp.ProfileFragment"
+        android:label="ข้อมูลผู้เช่า"
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_profileFragment_to_editProfileFragment"
+            app:destination="@id/editProfileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.example.dormitoryapp.EditProfileFragment"
+        android:label="เเก้ไขข้อมูลผู้เช่า"
+        tools:layout="@layout/fragment_edit_profile" >
+        <action
+            android:id="@+id/action_editProfileFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/leasesFragment"
+        android:name="com.example.dormitoryapp.LeasesFragment"
+        android:label="ข้อมูลสัญญาเช่า"
+        tools:layout="@layout/fragment_leases" />
+    <fragment
+        android:id="@+id/newFragment"
+        android:name="com.example.dormitoryapp.NewFragment"
+        android:label="กระดานข่าว"
+        tools:layout="@layout/fragment_new" />
+    <fragment
+        android:id="@+id/invoiceFragment"
+        android:name="com.example.dormitoryapp.InvoiceFragment"
+        android:label="บิลค่าเช่า"
+        tools:layout="@layout/fragment_invoice" />
+    <fragment
+        android:id="@+id/newdetailFragment"
+        android:name="com.example.dormitoryapp.NewdetailFragment"
+        android:label="fragment_newdetail"
+        tools:layout="@layout/fragment_newdetail" />
+    <activity
+        android:id="@+id/paymentActivity"
+        android:name="com.example.dormitoryapp.PaymentActivity"
+        android:label="activity_payment"
+        tools:layout="@layout/activity_payment" />
+</navigation>

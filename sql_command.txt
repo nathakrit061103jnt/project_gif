@@ -1,0 +1,12 @@
+SELECT * FROM leases l JOIN room r USING(room_id) JOIN renter ren USING(rid) JOIN roomtype rt USING(room_tid)
+
+
+<?=$data["room_tname"]?>
+
+<?=$data["r_name"]?>
+
+
+INSERT INTO `renter` (`rid`, `r_name`, `r_tel`, `r_idcard`, `r_add`, `r_email`, `username`, `password`) VALUES (NULL, 'sdf', 'sdf', 'sdf', 'sdf', 'sdf', 'sdf', 'sdf');
+
+
+INSERT INTO `leases` (`leases_id`, `aid`, `rid`, `room_id`, `leases_date`, `expires_date`, `leases_status`) VALUES (NULL, '1', '1', '1yuhk', '2021-03-11', '2021-04-16', '1');
