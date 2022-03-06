@@ -51,9 +51,9 @@ if (isset($_SESSION["aid"])) {
 
     <title>พิมพ์เลขที่สัญญาที่ <?=$leases_id?></title>
 
-    <!-- <script>
+    <script>
     window.print()
-    </script> -->
+    </script>
 
     <style>
     body {
