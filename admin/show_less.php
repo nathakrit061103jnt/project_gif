@@ -125,8 +125,8 @@ include "./configs/connectDB.php";
                                     </div>
 
                                 </div>
-                                <a href="./print_peper_promise.php?room_id=<?=$room_id?>&rid=<?=$room_id?>&leases_id=<?=$leases_id?>"
-                                    class="btn btn-primary" target="_back">พิมพ์สัญญาเช่า</a>
+                                <a href="./print_peper_promise.php?room_id=<?=$room_id?>&rid=<?=$rid?>&leases_id=<?=$leases_id?>"
+                                    class="btn btn-primary">พิมพ์สัญญาเช่า</a>
                             </form>
                             <?php
 }

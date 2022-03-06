@@ -14,9 +14,17 @@ if (isset($_SESSION["aid"])) {
                               JOIN roomtype ro USING(room_tid)
                               WHERE l.leases_id='$leases_id' AND ren.rid='$rid' AND r.room_id='$room_id'";
 
+        $sql2 =    "SELECT * FROM leases l
+                              JOIN renter ren USING(rid)
+                              JOIN room r USING(room_id)
+                              JOIN roomtype ro USING(room_tid)
+                              WHERE l.leases_id='$leases_id' AND ren.rid='$rid' AND r.room_id='$room_id'";
+
         $result = mysqli_query($conn, $sql);
 
         $data = mysqli_fetch_assoc($result);
+
+    //  echo  var_dump($data)  ;
 
         ?>
 
@@ -151,7 +159,11 @@ if (isset($_SESSION["aid"])) {
     $dateY = date_format($date,"Y") + 543;
     include_once ("function.php");
     $mThFormat = dateThFormat($dateM);
+
+    
     ?>
+
+
 
     <div class="main-page">
         <div class="sub-page">
