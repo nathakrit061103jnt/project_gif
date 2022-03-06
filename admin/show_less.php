@@ -125,7 +125,8 @@ include "./configs/connectDB.php";
                                     </div>
 
                                 </div>
-                                <a href="./data_leases.php" class="btn btn-info  ">กลับ</a>
+                                <a href="./print_peper_promise.php?room_id=<?=$room_id?>&rid=<?=$room_id?>&leases_id=<?=$leases_id?>"
+                                    class="btn btn-primary" target="_back">พิมพ์สัญญาเช่า</a>
                             </form>
                             <?php
 }

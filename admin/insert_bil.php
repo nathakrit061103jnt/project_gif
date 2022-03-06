@@ -21,7 +21,7 @@ if (isset($_SESSION["aid"])) {
     <meta name="author" content="">
 
     <title>ออกบิล</title>
-
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Custom fonts for this template -->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
@@ -86,21 +86,62 @@ $date = date_create($month);
                 AND l.room_id='$room_id' AND l.leases_id='$leases_id'
                 AND l.rid='$rid';";
 
+        $sql_invoice_berfor_meter = "SELECT * FROM invoice i 
+                                     WHERE i.leases_id=$leases_id 
+                                     ORDER BY i.invoice_id DESC LIMIT 1";
+
         $result = mysqli_query($conn, $sql);
+        $result_invoice_berfor_meter = mysqli_query($conn, $sql_invoice_berfor_meter);
+
+        $row_invoice_berfor_meter = mysqli_fetch_assoc($result_invoice_berfor_meter);
+
+        $meter_berfor_w = 0;
+        $meter_berfor_e = 0;
+        
+        if (mysqli_num_rows($result_invoice_berfor_meter) > 0) { 
+               $meter_berfor_w = $row_invoice_berfor_meter["meters_wnew"];
+               $meter_berfor_e = $row_invoice_berfor_meter["meters_lnew"];
+        }  
+ 
+
+        // echo($meter_berfor_w);
+        // echo($meter_berfor_e);
+
+        $l_rent =0;
+        $l_c_w =0;
+        $l_c_e=0;
 
         while ($row = mysqli_fetch_assoc($result)) {
+
+               $l_rent =  $row["l_rent"] ;
+               $l_c_w =$row["l_c_w"] ;
+               $l_c_e=$row["l_c_e"] ;
 
             ?>
                             <form method="post" action="">
                                 <div class="form-row">
+
+                                    <div class="form-group col-md-6">
+                                        <label for="inputEmail4">มิเตอร์น้ำก่อนหน้า </label>
+                                        <input type="number" readonly min="0" value='<?=$meter_berfor_w;?>' required
+                                            class="form-control" id="inputEmail4">
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="inputPassword4">มิเตอร์ไฟก่อนหน้า</label>
+                                        <input type="number" readonly min="0" value='<?=$meter_berfor_e;?>' required
+                                            class="form-control" id="inputPassword4">
+                                    </div>
+
                                     <div class="form-group col-md-6">
                                         <label for="inputEmail4">มิเตอร์น้ำล่าสุด </label>
-                                        <input type="number" min="0" name="meters_wnew" required class="form-control"
+                                        <input type="number" min="0" name="meters_wnew" v-model="meters_wnew"
+                                            @keyup="sumUnit_w" @change="sumUnit_w" required class="form-control"
                                             id="inputEmail4">
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label for="inputPassword4">มิเตอร์ไฟล่าสุด</label>
-                                        <input type="number" min="0" name="meters_lnew" required class="form-control"
+                                        <input type="number" @keyup="sumUnit_e" @change="sumUnit_e" min="0"
+                                            name="meters_lnew" v-model="meters_lnew" required class="form-control"
                                             id="inputPassword4">
                                     </div>
                                     <div class="form-group col-md-6">
@@ -115,28 +156,33 @@ $date = date_create($month);
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label for="inputAddress">จำนวนน้ำที่ใช้</label>
-                                        <input type="text" name="water_unit" required class="form-control">
+                                        <input type="text" v-model="water_unit" name="water_unit" readonly required
+                                            class="form-control">
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label for="inputAddress">จำนวนไฟที่ใช้</label>
-                                        <input type="number" name="light_unit" required class="form-control">
+                                        <input type="number" v-model="light_unit" name="light_unit" readonly required
+                                            class="form-control">
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label for="inputAddress">รวมค่าน้ำ</label>
-                                        <input type="number" name="total_wprice" required class="form-control">
+                                        <input type="number" v-model="total_wprice" name="total_wprice" readonly
+                                            required class="form-control">
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label for="inputAddress">รวมค่าไฟ</label>
-                                        <input type="number" name="total_lprice" required class="form-control">
+                                        <input type="number" name="total_lprice" v-model="total_lprice" readonly
+                                            required class="form-control">
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label for="inputAddress">ค่าเช่า</label>
-                                        <input type="number" name="l_rent" readonly value="<?=$row["l_rent"]?>" required
+                                        <input type="number" name="l_rent" v-model="l_rent" readonly required
                                             class="form-control">
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label for="inputAddress">ค่าเช่าห้องพักรวมสุทธิ</label>
-                                        <input type="number" name="net_total" required class="form-control">
+                                        <input type="number" name="net_total" v-model="net_total" readonly required
+                                            class="form-control">
                                     </div>
                                 </div>
                                 <button type="submit" name="insertSubmit" class="btn btn-primary">บันทึก</button>
@@ -168,7 +214,20 @@ include_once "./configs/connectDB.php";
         include_once "./function.php";
 
         if (isset($_POST["insertSubmit"])) {
-            $sql = "INSERT INTO `invoice` (`invoice_id`, `aid`, `invoice_date`, `meters_wnew`,
+ 
+            
+            if($_POST["water_unit"] < 0 || $_POST["light_unit"] < 0 ){
+                  $month=  $_GET["monthS"];
+                  $l = "insert_bil.php?monthS=$month&room_id=$room_id&rid=$rid&leases_id=$leases_id";
+                 echo
+                    "<script> 
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'บันทึกหน่วยน้ำหรือหรือหน่วยไฟฟ้าไม่ถูกต้อง', 
+                    }).then(()=> location = '$l')
+                </script>";
+            }else{
+                  $sql = "INSERT INTO `invoice` (`invoice_id`, `aid`, `invoice_date`, `meters_wnew`,
                     `meters_lnew`, `water_unit`, `light_unit`, `total_wprice`, `total_lprice`,
                      `net_total`, `Invoice_status`, `leases_id`, `invoice_month`, `pay_id`)
                     VALUES (NULL, '$aid', current_timestamp(), '" . $_POST["meters_wnew"] . "', '" . $_POST["meters_lnew"] . "',
@@ -176,20 +235,21 @@ include_once "./configs/connectDB.php";
                      '" . $_POST["total_lprice"] . "',  '" . $_POST["net_total"] . "', '0',
                       '$leases_id', '$month', '0');";
 
-            if (mysqli_query($conn, $sql)) {
+                if (mysqli_query($conn, $sql)) {
 
-                echo "<script>";
-                echo "alert('บันทึกข้อมูลเรียบร้อย');";
-                echo "</script>";
+                    echo "<script>";
+                    echo "alert('บันทึกข้อมูลเรียบร้อย');";
+                    echo "</script>";
 
-                echo "<script>";
-                echo "location = './data_bil.php';";
-                echo "</script>";
+                    echo "<script>";
+                    echo "location = './data_bil.php';";
+                    echo "</script>";
 
-            } else {
-                echo "<script>";
-                echo "alert('ไม่สามารถบันทึกข้อมูลได้');";
-                echo "</script>";
+                } else {
+                    echo "<script>";
+                    echo "alert('ไม่สามารถบันทึกข้อมูลได้');";
+                    echo "</script>";
+                }
             }
 
         }
@@ -223,11 +283,45 @@ include_once "./configs/connectDB.php";
         </div>
     </div>
 
+
+
     <script>
     const app = new Vue({
         el: '#app',
-        data: {
-            message: 'Hello Vue!'
+        data: () => ({
+            message: "ok",
+            meters_wnew: 0,
+            meters_lnew: 0,
+            meter_berfor_w: '<?=$meter_berfor_w?>',
+            meter_berfor_e: '<?=$meter_berfor_e?>',
+            l_c_e: '<?=$l_c_e;?>',
+            l_c_w: '<?=$l_c_w;?>',
+            water_unit: 0,
+            light_unit: 0,
+            total_wprice: 0,
+            total_lprice: 0,
+            l_rent: '<?=$l_rent;?>',
+            net_total: 0
+        }),
+        methods: {
+            sumUnit_w() {
+                this.water_unit = this.meters_wnew - this.meter_berfor_w
+                this.total_wprice = this.water_unit * this.l_c_w;
+                this.calculate()
+                // console.log('this.meter_berfor_w', this.meter_berfor_w);
+                // console.log('this.meters_wnew', this.meters_wnew);
+                // console.log('this.water_unit', this.water_unit);
+
+            },
+            sumUnit_e() {
+                this.light_unit = this.meters_lnew - this.meter_berfor_e;
+                this.total_lprice = this.light_unit * this.l_c_e
+                this.calculate()
+            },
+            calculate() {
+                this.net_total = (Number(this.total_wprice) + Number(this.total_lprice)) + Number(this.l_rent)
+            },
+
         }
     });
     </script>
